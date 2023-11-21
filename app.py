@@ -42,7 +42,10 @@ def calculate_cost():
     try:
         kilometers = float(request.form['kilometers'])
         liters_per_km = float(request.form['litersPerKm'])
-        fuel_price = float(request.form['fuelPrice'])
+        
+        # Use the customFuelPrice if provided, otherwise use the selected fuelPrice from the dropdown
+        fuel_price = float(request.form.get('customFuelPrice', request.form['fuelPrice']))
+        
         num_people = float(request.form['numPeople'])
 
         total_cost = ((liters_per_km * kilometers) / 100) * fuel_price / num_people
