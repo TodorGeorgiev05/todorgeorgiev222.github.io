@@ -3,110 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel Cost Calculator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-        }
-
-        button {
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
+    <title>Quadratic Calculator</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <h1>Travel Cost Calculator</h1>
+    <div class="calculator-container">
+        <h1>Quadratic Calculator</h1>
+        <label for="input-a">Enter coefficient a:</label>
+        <input type="number" id="input-a" placeholder="Enter a">
 
-    <form id="travelForm" method="post">
-        <label for="kilometers">Distance (in kilometers):</label>
-        <input type="number" id="kilometers" name="kilometers" required>
+        <label for="input-b">Enter coefficient b:</label>
+        <input type="number" id="input-b" placeholder="Enter b">
 
-        <label for="litersPerKm">Liters per kilometer:</label>
-        <input type="number" step="0.01" id="litersPerKm" name="litersPerKm" required>
-        <label for="fuelPrice">Select Fuel Type:</label>
-        <select id="fuelPrice" name="fuelPrice">
-            {% for fuel_type, price in fuel_prices %}
-                <option value="{{ price }}">{{ fuel_type }} - {{ price }} лв./л</option>
-            {% endfor %}
-        </select>
-        
-        <label for="customFuelPrice">Custom Fuel Price (per liter):</label>
-        <input type="number" step="0.01" id="customFuelPrice" name="customFuelPrice" disabled>
-        <input type="checkbox" id="customFuelCheckbox">
+        <label for="input-c">Enter coefficient c:</label>
+        <input type="number" id="input-c" placeholder="Enter c">
 
-        <label for="numPeople">Number of people:</label>
-        <input type="number" id="numPeople" name="numPeople" required>
+        <button onclick="calculateRoots()">Calculate Roots</button>
 
-        <button type="submit">Calculate Cost</button>
-    </form>
-
-    <h2>Total Cost: <span id="totalCost">{{ total_cost or '' }}</span></h2>
-    {% if error_message %}
-        <p style="color: red;">Error: {{ error_message }}</p>
-    {% endif %}
+        <p id="result"></p>
+    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-    // Add an event listener to the form
-    document.getElementById('travelForm').addEventListener('submit', function(event) {
-        // Prevent the default form submission
-        event.preventDefault();
+        function calculateRoots() {
+    // Get user input
+    var a = parseFloat(document.getElementById('input-a').value);
+    var b = parseFloat(document.getElementById('input-b').value);
+    var c = parseFloat(document.getElementById('input-c').value);
 
-        // Get form data
-        var form = event.target;
-        var formData = new FormData(form);
+    // Calculate the discriminant
+    var discriminant = b * b - 4 * a * c;
 
-        // If custom fuel price checkbox is checked, enable the customFuelPrice field
-        if (document.getElementById('customFuelCheckbox').checked) {
-            formData.set('fuelPrice', document.getElementById('customFuelPrice').value);
-        }
-
-        // Send a POST request using AJAX
-        fetch('/', {
-            method: 'POST',
-            body: formData,
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Update the total cost on the page
-            document.getElementById('totalCost').textContent = data.total_cost || '';
-            // Handle errors if needed
-            if (data.error) {
-                alert('Error: ' + data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    });
-
-    // Add an event listener to the customFuelCheckbox
-    document.getElementById('customFuelCheckbox').addEventListener('change', function() {
-        var customFuelPriceInput = document.getElementById('customFuelPrice');
-        customFuelPriceInput.disabled = !this.checked; // Enable/disable the input based on checkbox state
-        if (!this.checked) {
-            customFuelPriceInput.value = ''; // Clear the value if checkbox is unchecked
-        }
-    });
-});
-
+    // Check if roots are real
+    if (discriminant >= 0) {
+        var root1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+        var root2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+        document.getElementById('result').innerHTML = 'Roots are real and distinct.<br>Root 1: ' + root1 + '<br>Root 2: ' + root2;
+    } else {
+        document.getElementById('result').innerHTML = 'Roots are complex.';
+    }
+}
     </script>
+
 </body>
 </html>
